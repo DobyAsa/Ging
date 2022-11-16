@@ -5,8 +5,19 @@ import (
 	"net/http"
 )
 
+type Handler interface {
+	Route(method string, pattern string, handlerFunc func(c *Context))
+	ServeHTTP(w http.ResponseWriter, r *http.Request)
+}
+
 type HandlerBasedOnMap struct {
 	Roads map[string]func(c *Context)
+}
+
+func (h *HandlerBasedOnMap) Route(method string,
+	pattern string, handlerFunc func(c *Context)) {
+	key := h.key(method, pattern)
+	h.Roads[key] = handlerFunc
 }
 
 func (h *HandlerBasedOnMap) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -20,8 +31,8 @@ func (h *HandlerBasedOnMap) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *HandlerBasedOnMap) key(method string, path string) string {
-	return fmt.Sprintf("%s#%s", method, path)
+func (h *HandlerBasedOnMap) key(method string, pattern string) string {
+	return fmt.Sprintf("%s#%s", method, pattern)
 }
 
 func NewHandlerBasedOnMap() *HandlerBasedOnMap {
