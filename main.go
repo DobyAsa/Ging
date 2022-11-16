@@ -1,14 +1,21 @@
 package main
 
 import (
-	"Ging/framework"
+	"Ging/framwork"
+	"Ging/service/UserService"
+	"fmt"
 	"net/http"
 )
 
 func main() {
-	serve := &http.Server{
-		Handler: framework.NewCore(),
-		Addr:    ":8080",
-	}
-	serve.ListenAndServe()
+	s := framwork.NewHttpServer("FirstServer")
+
+	s.Route("/", hello)
+	s.Route("/signup", UserService.SignUp)
+
+	s.Start(":8080")
+}
+
+func hello(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello!")
 }
