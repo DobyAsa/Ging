@@ -10,12 +10,14 @@ import (
 func main() {
 	s := framwork.NewHttpServer("FirstServer")
 
-	s.Route("/", hello)
-	s.Route("/signup", UserService.SignUp)
-
+	//s.Route("/", hello)
+	//s.Route("/signup", UserService.SignUp)
+	//s.RouteWithMethod("GET", "/", hello)
+	s.RouteWithMethod(http.MethodPost, "/signup", UserService.SignUp)
+	s.RouteWithMethod(http.MethodGet, "/", hello)
 	s.Start(":8080")
 }
 
-func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello!")
+func hello(c *framwork.Context) {
+	fmt.Fprintf(c.W, "Hello!")
 }
